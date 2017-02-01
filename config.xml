@@ -1,0 +1,173 @@
+<!-- IOS config by Seb C. -->
+<!-- Config.xml: https://build.phonegap.com/docs/config-xml -->
+<!-- IOS conf: http://docs.phonegap.com/en/3.0.0/guide_platforms_ios_config.md.html#iOS%20Configuration -->
+<!-- PhoneGap 3.0 supported in PhoneGapBuild: http://phonegap.com/blog/2013/10/01/phonegap-30-now-supported/ -->
+
+<?xml version="1.0" encoding="UTF-8"?>
+<widget xmlns       = "http://www.w3.org/ns/widgets"
+        xmlns:gap   = "http://phonegap.com/ns/1.0"
+        id          = "cn.com.crm-factory.porscheec"
+        version     = "2"
+        versionCode = "1.0.0">
+
+    <name>Porsche EC</name>
+
+    <description>Porsche EC prototype</description>
+
+    <author href="http://www.crm-factory.eu" email="christian.sproll@crm-factory.com.cn">
+        CRM Factory
+    </author>
+
+    <!-- Plateform selection -->
+    <gap:platform name="ios" />
+
+    <!---------------- Shared config ------------------->
+
+    <!-- PhoneGap version -->
+    <!-- Check last changes here: http://phonegap.com/blog/2013/10/01/phonegap-30-now-supported/ -->
+    <preference name="phonegap-version" value="3.0.0" /> 
+
+    <!-- Orientation -->
+    <!-- Possible values: landscape, portrait and both -->
+    <preference name="orientation" value="both" />
+
+    <!-- Fullscreen -->
+    <!-- Set to true, blocks device functionalities (eg: pull down menu) ad status bar -->
+    <preference name="fullscreen" value="false" />
+
+    <!---------------- IOS config only ------------------->
+
+    <!-- Target device -->
+    <!-- Possible values: handset, tablet and universal -->
+    <preference name="target-device" value="tablet" />
+
+    <!-- Prerendered icon -->
+    <!-- Applies a gloss on app's icon -->
+    <preference name="prerendered-icon" value="true" /> 
+
+    <!-- Status bar style -->
+    <!-- Possible values: default, black-opaque and black-translucent -->
+    <preference name="ios-statusbarstyle" value="black-translucent" />
+
+    <!-- Data types -->
+    <!-- Set to true, handles numbers as phone numbers... Weird -->
+    <preference name="detect-data-types" value="false" /> 
+
+    <!-- Exit on suspend -->
+    <!-- Set to true, re-init app when exit -->
+    <preference name="exit-on-suspend" value="true" />
+
+    <!-- Hide auto splashscreen -->
+    <!-- If big app, splashscreen could disapears before rendering views -->
+    <preference name="AutoHideSplashScreen"  value="true" />
+
+    <!-- Fade splashscreen -->
+    <preference name="FadeSplashScreen"  value="true" />
+
+    <!-- Spinner splashscreen -->
+    <preference name="how-splash-screen-spinner"  value="true" /> 
+
+    <!-- NEW PREFERENCES with PhoneGap 3.0 -->
+    <!-- Set to defaults -->
+    <preference name="DisallowOverscroll" value="false" />
+    <preference name="SuppressesIncrementalRendering" value="false" />
+    <preference name="TopActivityIndicator" value="false" />
+    <preference name="EnableViewportScale" value="false" />    
+    <preference name="FadeSplashScreenDuration" value="2" />    
+    <preference name="MediaPlaybackRequiresUserAction" value="false" />
+    <preference name="AllowInlineMediaPlayback" value="false" />
+    <preference name="MediaPlaybackRequiresUserAction" value="false" />
+    <preference name="BackupWebStorage" value="false" />
+    <preference name="KeyboardDisplayRequiresUserAction" value="false" />    
+    <preference name="HideKeyboardFormAccessoryBar" value="false" />
+    <preference name="HideKeyboardFormAccessoryBar" value="false" />
+
+    <!-- Never really worked -->
+    <preference name="webviewbounce" value="false" />
+
+    <!-- Deprecated ? -->
+    <preference name="stay-in-webview" value="false" /> 
+
+    <!---------------- Access goes here -------------------> 
+
+    <!-- Allows all -->
+    <access origin="*"/>
+    <!-- Restricted origin eg -->
+    <!-- <access origin="http://phonegap.com" subdomains="true" /> -->
+
+    <!---------------- Features goes here ------------------->
+
+    <!-- By default disables permission -->
+    <preference name="permissions" value="none"/>
+
+    <gap:plugin name="org.apache.cordova.core.splashscreen" />
+    <gap:plugin name="org.apache.cordova.core.camera" />
+    <gap:plugin name="org.apache.cordova.core.file" />
+    <gap:plugin name="nl.x-services.plugins.calendar" version="3.2" />
+    <!--<gap:plugin name="com.phonegap.plugin.statusbar" version="1.0.0" />-->
+    
+    <!--
+    <gap:plugin name="org.apache.cordova.core.battery-status" />
+    <gap:plugin name="org.apache.cordova.core.media-capture" />
+    <gap:plugin name="org.apache.cordova.core.console" />
+    <gap:plugin name="org.apache.cordova.core.contacts" />
+    <gap:plugin name="org.apache.cordova.core.device" />
+    <gap:plugin name="org.apache.cordova.core.device-motion" />
+    <gap:plugin name="org.apache.cordova.core.device-orientation" />
+    <gap:plugin name="org.apache.cordova.core.file-transfer" />
+    <gap:plugin name="org.apache.cordova.core.geolocation" />
+    <gap:plugin name="org.apache.cordova.core.globalization" />
+    <gap:plugin name="com.phonegap.plugins.hydration" />
+    <gap:plugin name="org.apache.cordova.core.inappbrowser" />
+    <gap:plugin name="org.apache.cordova.core.audiohandler" />
+    <gap:plugin name="org.apache.cordova.core.network-information" />
+    <gap:plugin name="org.apache.cordova.core.dialogs" />    
+    <gap:plugin name="org.apache.cordova.core.vibration" />
+    -->
+
+    <!-- <feature name="debug-server" required="true">
+       <param name="domain" value="http://debug.build.phonegap.com"/>
+       <param name="key" value="myService"/>
+    </feature> -->
+
+    <!-- Allows individual features -->
+    <!-- DEPRECATED PhoneGap version less to 2.9 -->
+    <!--<feature name="http://api.phonegap.com/1.0/device" />-->
+    <!--<feature name="http://api.phonegap.com/1.0/battery"/>-->
+    <!--<feature name="http://api.phonegap.com/1.0/camera"/>-->
+    <!--<feature name="http://api.phonegap.com/1.0/contacts"/>-->
+    <!--<feature name="http://api.phonegap.com/1.0/file"/>-->
+    <!--<feature name="http://api.phonegap.com/1.0/geolocation"/>-->
+    <!--<feature name="http://api.phonegap.com/1.0/media"/>-->
+    <!--<feature name="http://api.phonegap.com/1.0/network"/>-->
+    <!--<feature name="http://api.phonegap.com/1.0/notification"/>-->
+
+    <!---------------- Plugins goes here ------------------->
+
+    <!---------------- Splashscreen goes here ------------------->
+
+    <!-- Default splashscreen -->
+    <!-- Has to reside in the root folder -->
+    <!--<gap:splash src="splash.png" />-->
+
+    <!-- Ipad -->
+    <!-- Noticed working height is 768 for landscape, not 748 official value -->
+    <gap:splash src="img/1024x768.png" gap:platform="ios" width="1024" height="768" />
+
+    <!-- Ipad retina -->
+    <!-- Support from PhoneGap 2.5.0+ only -->
+    <gap:splash src="img/2048x1496.png" gap:platform="ios" width="2048" height="1496" />
+    
+    <!---------------- Icons goes here ------------------->
+
+    <!-- Default icon -->
+    <!-- Has to reside in the root folder -->
+    <!--<icon src="icon.png" />-->
+
+    <!-- Ipad -->
+    <icon src="img/72x72.png" gap:platform="ios"  width="72" height="72" />
+
+    <!-- Ipad retina -->
+    <!-- Support from PhoneGap 2.5.0+ only -->
+    <icon src="img/144x144.png" gap:platform="ios"  width="144" height="144" />
+</widget>

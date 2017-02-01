@@ -1,0 +1,390 @@
+<div ng-init="Init()">
+    <button class="btn btn-primary btn-main pull-right" ng-show="page == 0" ng-click="summaryStart()">Finish</button>
+    <button class="btn btn-primary btn-main pull-right" ng-show="page == 1" ng-click="saveOpenConfirm()">Save</button>
+
+    <section class="time-line" ng-show="page == 0 || page == 1">
+        <div class="times" style="margin-left: -2px;">
+            <div class="time-label" ng-style="{ left: (10+90/getHours()*$index)+'%' }" ng-repeat="time in times = getTimes()" ng-show="times.length < 15 || $index % 2 == 0">{{ time }}</div>
+        </div>
+        <div class="progress">
+            <div class="progress-bar" ng-style="{ width: '8%' }" ng-click="selectSession(eventSession)" style="background: #c91602;">
+                Event
+            </div>
+            <div class="progress-bar" ng-click="selectSession(eventSession)" style="background: #f6f8fa; width: 2%; color: black;">
+                &ndash;
+            </div>
+            <div class="progress-bar" ng-style="{ width: (90/getHours()*session.duration)+'%' }"
+                 ng-click="selectSession(session)"
+                 ng-repeat="session in sessions" ng-class="{even: $even,odd: $odd}">
+                {{ session.name }}
+            </div>
+            <div class="progress-bar timeline-add btn-add" ng-style="{ width: (90/getHours()*0.5)+'%' }"
+                 ng-show="getRemainingHours(currentSession) >= 0.5 && page == 0" ng-click="createSession()">
+                +
+            </div>
+        </div>
+
+    </section>
+
+    <section class="content" ng-show="page == 0">
+        <div class="content-left">
+            <div class="content-header">
+                <form class="form-horizontal" role="form" ng-show="currentSession.type == 'event'">
+                    <div class="form-group">
+                        <label class="col-sm-1 control-label">From: </label>
+                        <div class="col-sm-2">
+                            <select class="form-control input-sm" ng-model="day.start"
+                                    ng-options="time.format('h:mm a') for time in getPackageTimes('from') track by time.valueOf()"
+                                    ng-change="eventSessionDurationChanged('from')"></select>
+                        </div>
+
+                        <label class="col-sm-1 control-label">To: </label>
+                        <div class="col-sm-2">
+                            <select class="form-control input-sm" ng-model="day.end"
+                                    ng-options="time.format('h:mm a') for time in getPackageTimes('to') track by time.valueOf()"
+                                    ng-change="eventSessionDurationChanged('to')"></select>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="col-1" ng-show="currentSession.type == 'session'">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-2 control-label">Name</label>
+
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control input-sm" placeholder="Name your session"
+                                       ng-model="currentSession.name">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="col-2 qty" ng-show="currentSession.type == 'session'">
+                    <span class="qty-text-left">Duration</span>
+
+                    <form class='qty-form' method='POST' action='#'>
+                        <div myx-value-spinner value="currentSession.duration" step="0.5" min="0.5"
+                             max="getRemainingHours(currentSession)"></div>
+                    </form>
+                    <span class="qty-text-right">Hours</span>
+                </div>
+                <div class="col-3" ng-show="currentSession.type == 'session'">
+                    <button class="btn btn-sm btn-danger" ng-click="deleteCurrentSession()">Delete Session</button>
+                </div>
+            </div>
+            <div class="content-body">
+                <div class="steps">
+                    <ul class="steps-init">
+
+                        <li class="steps-list" ng-click="step = 1" ng-class="{'active': step == 1 }">
+                            <div class="step-title">1</div>
+                            <div class="step-text">Vehicles</div>
+                        </li>
+
+                        <li class="steps-list" ng-click="step = 2" ng-class="{'active': step == 2 }">
+                            <div class="step-title">2</div>
+                            <div class="step-text">Tracks</div>
+                        </li>
+
+                        <li class="steps-list" ng-click="step = 3" ng-class="{'active': step == 3 }">
+                            <div class="step-title">3</div>
+                            <div class="step-text">Facilities</div>
+                        </li>
+
+                        <li class="steps-list" ng-click="step = 4" ng-class="{'active': step == 4 }">
+                            <div class="step-title">4</div>
+                            <div class="step-text">Personnel</div>
+                        </li>
+
+                    </ul>
+                </div>
+
+                <div class="step-title">
+                    Step {{ step }}.
+                    <strong ng-show="step == 1">Select Vehicles</strong>
+                    <strong ng-show="step == 2">Select Tracks</strong>
+                    <strong ng-show="step == 3">Select Facilities</strong>
+                    <strong ng-show="step == 4">Select Personnel</strong>
+                </div>
+
+                <!-- Start - Step 1. -->
+                <div class="step-content" ng-show="step == 1">
+                    <div class="step-box car" ng-class="{ 'pull-left': $even,'pull-right': $odd }"
+                         ng-repeat="car in stock.vehicles">
+                        <div class="pull-left">
+                            <img ng-src="{{ car.icon }}" alt="">
+                        </div>
+                        <div class="qty pull-right">
+                            <form class="qty-form ng-pristine ng-valid" method="POST" action="#">
+                                <div myx-value-spinner value="currentSession.configuration.vehicles[car.key].count"
+                                     increment="setAllModelsIfNone(car.key)"
+                                     max="car.models.length"
+                                     step="1"></div>
+                            </form>
+                        </div>
+                        <div class="step-box-list clearfix">
+                            <div class="checkbox label-checkbox">
+                                <h2 class="step-box-list-title">
+                                    <input type="checkbox"
+                                           ng-model="currentSession.configuration.vehicles[car.key].allModels"
+                                           ng-click="setAllModels(car.key)">
+                                    {{ car.name }}
+                                </h2>
+                            </div>
+
+                            <ul class="step-box-offer car">
+                                <li class="step-box-offer-list" ng-repeat="model in car.models">
+                                    <div class="checkbox label-checkbox">
+                                        <label>
+                                            <input type="checkbox"
+                                                   ng-model="currentSession.configuration.vehicles[car.key].models[model.key]"
+                                                   ng-click="getAllModelsPerCar(car.key, model.key)">
+                                            {{ model.name }}
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- End - Step 1. -->
+
+                <!-- Start - Step 2. -->
+                <div class="step-content" ng-show="step == 2">
+                    <div class="step-box text-center" ng-class="{ 'pull-left': $even,'pull-right': $odd }"
+                         ng-repeat="track in stock.tracks">
+                        <img ng-src="{{ track.image }}" alt="">
+
+                        <div class="step-box-air checkbox label-checkbox">
+                            <label>
+                                <input type="checkbox"
+                                       ng-model="currentSession.configuration.tracks[track.key]">
+                                {{ track.name }}
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <!-- End - Step 2. -->
+
+                <!-- Start - Step 3. -->
+                <div class="step-content" ng-show="step == 3">
+                    <div class="step-box" ng-class="{ 'pull-left': $even,'pull-right': $odd }"
+                         ng-repeat="facility in stock.facilities">
+                        <div class="qty pull-right">
+                            <form class="qty-form ng-pristine ng-valid" method="POST" action="#">
+                                <div myx-value-spinner value="currentSession.configuration.facilities[facility.key].count"
+                                     step="1"
+                                     max="facility.specific.length"
+                                     increment="setAllSpecificIfNone(facility.key)"></div>
+                            </form>
+                        </div>
+                        <div class="step-box-list clearfix">
+                            <ul class="step-box-select">
+                                <li class="step-box-select-list">
+                                    <div class="step-box-select-list-title checkbox label-checkbox">
+                                        <label>
+                                            <input type="checkbox"
+                                                   ng-model="currentSession.configuration.facilities[facility.key].allSpecific"
+                                                   ng-click="setAllSpecific(facility.key)">
+                                            {{ facility.name }}
+                                        </label>
+                                    </div>
+                                </li>
+                                <li class="step-box-select-list" ng-repeat="specificFacility in facility.specific">
+                                    <div class="checkbox label-checkbox">
+                                        <label>
+                                            <input type="checkbox"
+                                                   ng-model="currentSession.configuration.facilities[facility.key].specific[specificFacility.key]"
+                                                   ng-click="getAllSpecificPerFacility(facility.key, specificFacility.key)">
+                                            {{ specificFacility.name }}
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- End - Step 3. -->
+
+                <!-- Start - Step 4. -->
+                <div class="step-content personnel clearfix" ng-show="step == 4">
+                    <div class="pull-left specific">
+                        <div class="step-box step-box-sm"
+                             ng-repeat="person in stock.personnel | filter:{type:'specific'}">
+                            <div class="qty pull-right">
+                                <form class="qty-form ng-pristine ng-valid" method="POST" action="#">
+                                    <div myx-value-spinner value="currentSession.configuration.personnel[person.key].count"
+                                         step="1"
+                                         max="person.specific.length"
+                                         increment="setAllSpecificPersonnelIfNone(person.key)"></div>
+                                </form>
+                            </div>
+
+                            <div class="step-box-list clearfix">
+                                <div class="checkbox label-checkbox">
+                                    <h2 class="step-box-list-title">
+                                        <input type="checkbox"
+                                               ng-model="currentSession.configuration.personnel[person.key].allSpecific"
+                                               ng-click="setAllSpecificPersonnel(person.key)">
+                                        {{ person.name }}
+                                    </h2>
+                                </div>
+
+                                <ul class="step-box-select">
+                                    <li class="step-box-select-list" ng-repeat="specificPerson in person.specific">
+                                        <div class="checkbox label-checkbox">
+                                            <label>
+                                                <input type="checkbox"
+                                                       ng-model="currentSession.configuration.personnel[person.key].specific[specificPerson.key]"
+                                                       ng-click="getAllSpecificPerPerson(person.key, specificPerson.key)">
+                                                {{ specificPerson.name }}
+                                            </label>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pull-right generic">
+                        <div class="step-box step-box-sm">
+                            <div ng-repeat="person in stock.personnel | filter:{type:'generic'}">
+                                <div class="qty pull-right">
+                                    <form class="qty-form ng-pristine ng-valid" method="POST" action="#">
+                                        <div myx-value-spinner value="currentSession.configuration.personnel[person.key].count"
+                                             step="1"
+                                             max="person.count"></div>
+                                    </form>
+                                </div>
+                                <div class="step-box-list clearfix">
+                                    <ul class="step-box-select">
+                                        <li class="step-box-select-list">
+                                            <div class="checkbox label-checkbox">
+                                                <label>
+                                                    {{ person.name }}
+                                                </label>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End - Step 4. -->
+            </div>
+        </div>
+
+        <div class="content-right">
+            <h3 class="content-title">Summary <br>{{ currentSession.name }} </h3>
+
+            <div class="item">
+                <h4 class="item-title">Vehicles Selected</h4>
+                <ul class="item-content">
+                    <li class="item-content-list" ng-repeat="(key,vehicle) in currentSession.configuration.vehicles"
+                        ng-show="vehicle.count != 0">
+                        {{ (stock.vehicles | filter:{key:key})[0].name }}
+                        <span class="pull-right">{{ vehicle.count }}</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="item">
+                <h4 class="item-title">Tracks selected</h4>
+                <ul class="item-content">
+                    <li class="item-content-list" ng-repeat="(key,track) in currentSession.configuration.tracks"
+                        ng-show="track">
+                        {{ (stock.tracks | filter:{key: key})[0].name }}
+                        <span class="pull-right">1</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="item">
+                <h4 class="item-title">Facilities selected</h4>
+                <ul class="item-content">
+                    <li class="item-content-list" ng-repeat="(key,facility) in currentSession.configuration.facilities"
+                        ng-show="facility.count != 0">
+                        {{ (stock.facilities | filter:{key:key})[0].name }}
+                        <span class="pull-right">{{ facility.count }}</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="item">
+                <h4 class="item-title">Personnel</h4>
+                <ul class="item-content">
+                    <li class="item-content-list" ng-repeat="(key,person) in currentSession.configuration.personnel"
+                        ng-show="person.count != 0">
+                        {{ (stock.personnel | filter:{key:key})[0].name }}
+                        <span class="pull-right">{{ person.count }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <div class="summary" ng-show="page == 1">
+        <div class="summary-list col-xs-3" ng-repeat="session in getAllSessions()" ng-class="'type-'+session.type">
+            <h3 class="summary-title">{{ session.name }}</h3>
+
+            <div class="item-time">
+                <div class="item-list">{{ session.startTime | date:'shortTime' }} -
+                    {{ session.endTime | date:'shortTime' }}
+                </div>
+            </div>
+
+            <div class="item">
+                <h4 class="item-title">Vehicles</h4>
+                <ul class="item-content">
+                    <li class="item-content-list" ng-repeat="(key,vehicle) in session.configuration.vehicles"
+                        ng-if="vehicle.count > 0">
+                        {{ (stock.vehicles | filter:{key:key})[0].name }}
+                        <span class="pull-right">{{ vehicle.count }}</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="item">
+                <h4 class="item-title">Tracks</h4>
+                <ul class="item-content">
+                    <li class="item-content-list" ng-repeat="(key,track) in session.configuration.tracks"
+                        ng-if="track">
+                        {{ (stock.tracks | filter:{key: key})[0].name }}
+                        <span class="pull-right">1</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="item">
+                <h4 class="item-title">Facilities</h4>
+                <ul class="item-content">
+                    <li class="item-content-list" ng-repeat="(key,facility) in session.configuration.facilities"
+                        ng-if="facility.count > 0">
+                        {{ (stock.facilities | filter:{key:key})[0].name }}
+                        <span class="pull-right">{{ facility.count }}</span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="item">
+                <h4 class="item-title">Personnel</h4>
+                <ul class="item-content">
+                    <li class="item-content-list" ng-repeat="(key,person) in session.configuration.personnel"
+                        ng-if="person.count > 0">
+                        {{ (stock.personnel | filter:{key:key})[0].name }}
+                        <span class="pull-right">{{ person.count }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="save-confirmation" ng-show="page == 2">
+        <h2>Confirm Save</h2>
+        <div>Are you sure you want to save the current event setup and resource selection?</div>
+        <br/>
+        <button type="button" class="btn btn-primary" ng-click="save()" ng-disabled="controls.saveBtn.isDisabled">Save</button>
+        <button type="button" class="btn btn-default" ng-click="page = 1">Back to Review</button>
+        <button type="button" class="btn btn-default" ng-click="page = 0">Back to Configuration</button>
+    </div>
+</div>

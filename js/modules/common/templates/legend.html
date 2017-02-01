@@ -1,0 +1,10 @@
+<div class="legend">
+	<span class="filter sort" ng-class="legend.active === item.label ? 'active': ''" ng-repeat="item in legend.data" ng-click="legend.active = item.label">
+		<span class="count">
+			{{item.value}}
+		</span>
+		<span class="filter-title">
+			{{item.label}}
+		</span>
+	</span>
+</div>

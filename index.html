@@ -1,0 +1,59 @@
+﻿<!doctype html>
+<html xmlns:ng="http://angularjs.org" id="ng-app" ng-app="porscheEC">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>Porsche EC</title>
+
+    <meta name="description" content="">
+    <meta name="keywords" content="">
+    <meta name="copyright" content="">
+
+    <meta name="viewport" content="initial-scale=1.0, width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+
+    <script>
+        document.createElement('ng-controller');
+        document.createElement('ng-include');
+        document.createElement('ng-pluralize');
+        document.createElement('ng-view');
+
+        // Optionally these for CSS
+        document.createElement('ng:controller');
+        document.createElement('ng:include');
+        document.createElement('ng:pluralize');
+        document.createElement('ng:view');
+    </script>
+
+    <!-- /WebResources/ClientGlobalContext.js.aspx is accessed using a relative path
+    because the name of the Web Resource created from this file is "sample_/RESTJQueryContactEditor.htm".
+    The use of the backslash within the name creates a virtual folder that must be considered
+    in relative links between Web Resources.
+    
+    <!--<script type="text/javascript" src="../ClientGlobalContext.js.aspx"></script>-->
+
+    <!--[if lt IE9]> 
+    <script type="text/javascript" src="./bower_components/json2/json2.js"></script>
+    <script type="text/javascript" src="./bower_components/html5shiv/dist/html5shiv.js"></script>
+    <![endif]-->
+
+    <!-- build:css css/style.css -->
+    <link rel="stylesheet" media="screen" type="text/css" href="css/style.css">
+    <!-- endbuild -->
+</head>
+<body>
+    <div id="porscheec-app">
+        <main id="main-display">
+            <div id="content" class="content">
+                <div class="current" ng-view></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- build:js porsche.build -->
+    <script data-main="js/require.config" src="bower_components/requirejs/require.js"></script>
+    <!-- endbuild -->
+</body>
+</html>
